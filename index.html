@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#090b16"><meta name="description" content="Tvoje vlastní seriálové příběhy s předčítáním."><link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icon.svg" type="image/svg+xml">
+<title>StoryVerse AI — seriálové příběhy</title>
+<style>
+:root{--bg:#090b16;--panel:#13172a;--panel2:#1b2038;--text:#f4f5ff;--muted:#a8aecb;--accent:#9b7bff;--accent2:#42d9c8;--line:#2b3151}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#1a2042 0,#090b16 55%);color:var(--text);font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh}
+header{max-width:1180px;margin:auto;padding:26px 22px 12px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.logo{display:flex;gap:12px;align-items:center;font-weight:850;font-size:1.25rem;letter-spacing:.2px}.mark{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;color:#090b16;font-size:23px}
+.pill{border:1px solid var(--line);background:#151a30;color:#c7cbea;border-radius:999px;padding:7px 12px;font-size:.82rem}
+main{max-width:1180px;margin:auto;padding:16px 22px 50px}.hero{padding:28px 0 24px}.eyebrow{color:var(--accent2);font-size:.78rem;font-weight:800;letter-spacing:2px;text-transform:uppercase}.hero h1{font-size:clamp(2rem,5vw,3.8rem);line-height:1.04;letter-spacing:-1.7px;margin:10px 0 14px;max-width:760px}.hero p{color:var(--muted);max-width:700px;margin:0}
+.layout{display:grid;grid-template-columns:310px minmax(0,1fr);gap:20px;align-items:start}.panel{background:linear-gradient(180deg,rgba(23,28,51,.96),rgba(16,20,38,.96));border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:0 18px 55px #0002}.panel h2{font-size:1.05rem;margin:0 0 15px}.field{display:block;margin:14px 0}.field span{display:block;color:var(--muted);font-size:.85rem;margin-bottom:7px}
+select,input,textarea{width:100%;background:#0c1020;border:1px solid #343b60;color:var(--text);border-radius:12px;padding:12px;font:inherit;outline:none}select:focus,input:focus,textarea:focus{border-color:var(--accent)}
+button{border:0;border-radius:12px;padding:12px 15px;font:inherit;font-weight:750;cursor:pointer;transition:transform .15s,filter .15s}button:hover{filter:brightness(1.08);transform:translateY(-1px)}button:disabled{opacity:.45;cursor:not-allowed;transform:none}.primary{background:linear-gradient(110deg,var(--accent),#7566ef);color:white;width:100%;box-shadow:0 8px 24px #826bff2b}.secondary{background:#252b49;color:#f4f5ff;border:1px solid #3a4268}.teal{background:#123b3a;color:#a8fff3;border:1px solid #276b66}.small{font-size:.86rem;padding:9px 11px}
+.note{font-size:.78rem;color:#9098bc;margin-top:13px}.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.chip{border:1px solid var(--line);border-radius:999px;padding:6px 10px;color:#c9ccef;font-size:.78rem}
+.storytop{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}.storytop h2{font-size:1.5rem;margin:2px 0 5px}.storytop p{color:var(--muted);margin:0;font-size:.9rem}.actions{display:flex;gap:8px;flex-wrap:wrap}
+.episodebar{display:flex;gap:8px;overflow:auto;padding:18px 0 15px}.epbtn{white-space:nowrap;background:#10152a;color:#aeb5d6;border:1px solid var(--line);padding:9px 12px}.epbtn.active{background:#332a60;border-color:#9b7bff;color:white}
+.art{height:260px;border-radius:17px;overflow:hidden;position:relative;border:1px solid #363d61;background:linear-gradient(135deg,#20264a,#111528);margin-bottom:18px;display:flex;align-items:center;justify-content:center}
+.art:before{content:"";position:absolute;width:220px;height:220px;border-radius:50%;background:var(--glow,#8c71ff);filter:blur(75px);opacity:.5;left:15%;top:0}
+.art:after{content:"";position:absolute;width:200px;height:200px;border-radius:50%;background:var(--glow2,#37d9cb);filter:blur(70px);opacity:.3;right:10%;bottom:-20%}
+.scene{z-index:1;font-size:clamp(4rem,11vw,7.5rem);filter:drop-shadow(0 15px 24px #0008);letter-spacing:12px;animation:float 5s ease-in-out infinite}
+.artcaption{position:absolute;z-index:2;left:17px;bottom:15px;background:#090b16bb;border:1px solid #ffffff25;border-radius:10px;padding:8px 12px;font-size:.82rem;color:#e5e8ff;backdrop-filter:blur(10px)}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.storytext{font-size:1.02rem;line-height:1.85;color:#e5e7fa;white-space:pre-line}.storytext p{margin:0 0 14px}.read-sentence{border-radius:4px;transition:background .18s, color .18s, text-decoration-color .18s}.read-sentence.active{color:#ffffff;background:linear-gradient(transparent 62%,#9b7bff45 62%);text-decoration:underline;text-decoration-color:#b7a5ff;text-decoration-thickness:2px;text-underline-offset:5px;text-decoration-skip-ink:none}.dialogue{padding:12px 14px;border-left:3px solid var(--accent);background:#ffffff06;border-radius:0 12px 12px 0;margin:12px 0}.speaker{font-size:.77rem;font-weight:800;letter-spacing:.5px;color:var(--accent2);text-transform:uppercase;display:block;margin-bottom:3px}
+.bottomtools{display:flex;gap:9px;flex-wrap:wrap;border-top:1px solid var(--line);margin-top:22px;padding-top:18px}.status{font-size:.82rem;color:var(--muted);margin-top:12px;min-height:1.3em}.footer{color:#777f9f;text-align:center;font-size:.78rem;margin-top:25px}
+@media(max-width:800px){.layout{grid-template-columns:1fr}.hero{padding-top:16px}.art{height:220px}}
+
+/* Mobilní rozvržení: pohodlné ovládání na telefonu */
+@media(max-width:600px){
+  body{font-size:16px}
+  header{padding:14px 14px 8px;align-items:flex-start}
+  .logo{font-size:1.1rem;gap:9px}
+  .mark{width:38px;height:38px;border-radius:12px}
+  header .pill{font-size:.72rem;padding:6px 9px}
+  main{padding:8px 12px 28px}
+  .hero{padding:14px 0 18px}
+  .hero h1{font-size:clamp(2rem,10vw,3rem);letter-spacing:-1px}
+  .hero p{font-size:.95rem}
+  .layout{grid-template-columns:minmax(0,1fr);gap:12px}
+  .panel{padding:15px;border-radius:17px;min-width:0}
+  .field{margin:12px 0}
+  select,input,textarea{font-size:16px;padding:12px;min-height:46px}
+  button{min-height:44px;touch-action:manipulation}
+  .storytop{gap:10px}
+  .storytop h2{font-size:1.25rem;overflow-wrap:anywhere}
+  .storytop .actions{width:100%}
+  .storytop .actions button{flex:1}
+  .episodebar{padding:12px 0;gap:7px;scrollbar-width:thin}
+  .epbtn{padding:10px 12px}
+  .art{height:190px;margin-bottom:14px}
+  .scene{font-size:clamp(3.5rem,16vw,5.5rem);letter-spacing:3px}
+  .artcaption{left:10px;right:10px;bottom:10px;font-size:.75rem}
+  .storytext{font-size:1rem;line-height:1.75;overflow-wrap:anywhere}
+  .bottomtools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px;padding-top:14px}
+  .bottomtools button{padding:10px 8px;font-size:.9rem}
+  .note{line-height:1.5}
+  .footer{padding:0 8px}
+}
+@media(max-width:360px){
+  .bottomtools{grid-template-columns:1fr}
+  .header .pill{display:none}
+  .panel{padding:12px}
+}
+
+</style>
+</head>
+<body>
+<header><div class="logo"><div class="mark">✦</div><div>StoryVerse <span style="color:var(--accent2)">AI</span></div></div><div class="pill">📚 Tvoje příběhy • 5 dílů v sérii</div></header>
+<main>
+<section class="hero"><div class="eyebrow">Tvůj vlastní seriál</div><h1>Vymysli svět.<br>Prožij každý díl.</h1><p>Vyber žánr a postavy, vytvoř pětidílný příběh, čti ho jako seriál nebo si ho nech předčítat. Každý díl navazuje na předchozí.</p></section>
+<div class="layout">
+<aside class="panel">
+<h2>🎬 Nastavení seriálu</h2>
+<label class="field"><span>Žánr</span><select id="genre"><option value="horor">👻 Horor</option><option value="komedie">😂 Komedie</option><option value="drama">🎭 Drama</option><option value="fantasy">🐉 Fantasy</option><option value="sci-fi">🚀 Sci-fi</option><option value="detektivka">🕵️ Detektivka</option><option value="dobrodruzny">🧭 Dobrodružný</option><option value="romance">💌 Přátelství a city</option></select></label>
+<label class="field"><span>Název seriálu</span><input id="title" maxlength="60" value="Tajemství posledního vlaku"></label>
+<label class="field"><span>Hlavní kluk</span><input id="boy" maxlength="24" value="Adam"></label>
+<label class="field"><span>Hlavní holka</span><input id="girl" maxlength="24" value="Nela"></label>
+<label class="field"><span>Místo děje</span><input id="place" maxlength="50" value="opuštěné nádraží"></label>
+<label class="field"><span>Styl příběhu</span><select id="style"><option value="napínavý">Napínavý a filmový</option><option value="temný">Temný a tajemný</option><option value="vtipný">Vtipný a svižný</option><option value="dojemný">Dojemný a emotivní</option></select></label>
+<label class="field"><span>Jazyk příběhu i předčítání</span><select id="language"><option value="cs">🇨🇿 Čeština</option><option value="en">🇬🇧 English</option><option value="de">🇩🇪 Deutsch</option><option value="es">🇪🇸 Español</option><option value="fr">🇫🇷 Français</option></select></label>
+<label class="field"><span>Hlas pro kluka</span><select id="maleVoice"><option value="">Automaticky vybrat mužský hlas</option></select></label>
+<label class="field"><span>Hlas pro holku</span><select id="femaleVoice"><option value="">Automaticky vybrat ženský hlas</option></select></label>
+<p class="note">Příběh i předčítání se přepnou do zvoleného jazyka. Pro přirozenější hlasy zkus aplikaci otevřít v Microsoft Edge a vybrat hlas označený „Natural“ nebo „Online“. Skutečně nový AI hlas vyžaduje externí hlasovou službu.</p>
+<button class="primary" id="create">✨ Vytvořit pětidílný seriál</button>
+<div class="chips"><span class="chip">5 navazujících dílů</span><span class="chip">Obrázky scén</span><span class="chip">Předčítání postav</span></div>
+<p class="note">Hlas vybíráš pro každou postavu zvlášť. Dostupné hlasy se liší podle systému a prohlížeče; aplikace bez připojení ke hlasové službě nemůže sama vytvořit nový realistický hlas.</p>
+</aside>
+<section class="panel" aria-live="polite">
+<div class="storytop"><div><div class="eyebrow" id="genreLabel">HOROR • SERIÁL</div><h2 id="storyTitle">Tajemství posledního vlaku</h2><p id="storySub">1. díl z 5 • Začátek záhady</p></div><div class="actions"><button class="secondary small" id="install" hidden>⬇ Instalovat aplikaci</button><button class="secondary small" id="prev">← Předchozí</button><button class="secondary small" id="next">Další díl →</button></div></div>
+<div class="episodebar" id="episodebar"></div>
+<div class="art" id="art"><div class="scene" id="scene">🌫️ 🚉 🌙</div><div class="artcaption" id="artcaption">Scéna 1 • Něco není v pořádku</div></div>
+<div class="storytext" id="storytext"></div>
+<div class="bottomtools"><button class="teal" id="read">▶ Přečíst nahlas</button><button class="secondary" id="pause">Ⅱ Pauza / pokračovat</button><button class="secondary" id="stop">■ Zastavit hlas</button><button class="secondary" id="copy">⧉ Kopírovat díl</button></div>
+<div class="status" id="status">Tip: klikni na některý díl nebo spusť předčítání.</div>
+</section>
+</div>
+<div class="footer">StoryVerse AI • Responzivní aplikace pro počítač i mobil • Pro plně generované AI obrázky a hlasové klonování by bylo potřeba připojit online služby.</div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+let episodes=[], current=0, voices=[];
+const genreData={
+ horor:{emoji:"👻",scene:["🌫️ 🚉 🌙","🔦 🚪 👁️","🕯️ 🪞 🌑","🚂 💨 👤","🌅 🚉 🗝️"],titles:["Poslední spoj","Zvuk za dveřmi","Zpráva v zrcadle","Vlak, který neměl přijet","Pátá minuta"],glow:"#8064ff",glow2:"#55b6d8",intro:"Na tom místě se po setmění děly věci, o kterých se ve městě raději nemluvilo.",twist:"Pak se ozval zvuk, který nemohl patřit nikomu živému.",end:"Z reproduktoru zapraskalo: „Ještě není konec. Zítra ve stejný čas.“"},
+ komedie:{emoji:"😂",scene:["🎒 🛴 ☀️","🍕 💥 😂","🐕 🧢 🎉","🎤 🤦 🎈","🏆 🍕 🥳"],titles:["Nejhorší plán století","Pizza katastrofa","Pes je šéf","Talentová pohroma","Slavný omyl"],glow:"#ff9f62",glow2:"#e96bd1",intro:"Všechno mělo být jednoduché. Což byla přesně ta chvíle, kdy se to začalo kazit.",twist:"A potom se stalo něco tak absurdního, že se tomu nedalo ani věřit.",end:"„Tak jo,“ povzdechl si někdo. „Příště vymyslíme plán, který nemá žádný plán.“"},
+ drama:{emoji:"🎭",scene:["🌧️ 🪟 💌","🚶 🌆 ☔","📱 💬 🌙","🤝 🌤️ 🫶","🌄 🛤️ ✨"],titles:["Co zůstalo nevyřčeno","Vzdálenost","Zpráva ve 23:17","Rozhodnutí","Nový začátek"],glow:"#718acb",glow2:"#e99cbe",intro:"Někdy se všechno změní jedinou větou. A někdy tím, co nikdo nedokáže říct.",twist:"Poprvé si oba uvědomili, že mlčení může bolet víc než pravda.",end:"Tentokrát nikdo neodešel. A to byl začátek změny."},
+ fantasy:{emoji:"🐉",scene:["🐉 🌲 ✨","🗡️ 🏰 🌌","🧙 📜 🔮","🌋 🐲 ⚔️","👑 🌄 🪽"],titles:["Mapa z hvězd","Brána do Mlžného království","Tři zkoušky","Probuzení draka","Koruna úsvitu"],glow:"#8e68ff",glow2:"#42d9c8",intro:"Za hranicí známého světa existovalo místo, které se ukazovalo jen těm, kdo se nebáli hledat.",twist:"Runy se rozsvítily a starý svět se na okamžik nadechl.",end:"Cesta skončila, ale na mapě se objevilo nové místo. Jejich další dobrodružství teprve začínalo."},
+ "sci-fi":{emoji:"🚀",scene:["🌌 🛰️ 🌍","🤖 🚪 🔋","🪐 📡 ⚡","🚀 ☄️ 🌠","🌍 🌅 🛸"],titles:["Signál zítra","Sektor 9","Časová chyba","Poslední orbit","Nový signál"],glow:"#4f8dff",glow2:"#45f2d1",intro:"Ve chvíli, kdy se na obrazovce objevila zpráva z budoucnosti, přestala platit všechna pravidla.",twist:"Čas na monitoru se změnil. Zpráva byla o minutu starší než předtím.",end:"Na displeji blikla jediná věta: „Děkuji. Teď je řada na vás.“"},
+ detektivka:{emoji:"🕵️",scene:["🔎 🧤 🌧️","📁 🕯️ 🗝️","🧩 📰 🕰️","🚪 👣 🕵️","📷 🗝️ ☀️"],titles:["Případ bez stopy","Dopis bez podpisu","Tři podezřelí","Past v archivu","Pravda na světle"],glow:"#d0a65b",glow2:"#64c5c1",intro:"Vypadalo to jako obyčejná záhada, ale každá stopa vedla k další otázce.",twist:"Jeden detail neseděl. A právě ten mohl změnit úplně všechno.",end:"Případ byl uzavřený, ale v kapse zůstal další anonymní vzkaz."},
+ dobrodruzny:{emoji:"🧭",scene:["🗺️ 🌴 ☀️","🌊 🪨 🧭","🌉 🌫️ 🎒","⛰️ 🦅 🌪️","🏝️ 📦 🌅"],titles:["Mapa v podkroví","Za řekou","Most nad propastí","Bouře na hřebeni","Poklad a slib"],glow:"#e2a35b",glow2:"#46c9bd",intro:"Starou mapu našli náhodou. Jenže značka na jejím okraji byla čerstvá.",twist:"Za posledním kamenem čekalo něco, co na žádné mapě nebylo.",end:"Poklad nebyl konec cesty. Byl to důkaz, že svět je mnohem větší, než si mysleli."},
+ romance:{emoji:"💌",scene:["🌸 📱 🌇","☕ 🌧️ 💬","🎧 🌙 💭","🌅 🤝 💗","🌻 🚲 ☀️"],titles:["Náhodné setkání","Nedorozumění","To, co se neříká","Upřímně","Společná cesta"],glow:"#ec79b2",glow2:"#a48bff",intro:"Někdy člověk potká někoho, kdo mu nenápadně změní obyčejný den.",twist:"Stačila jedna upřímná otázka a všechno, co si domýšleli, začalo vypadat jinak.",end:"Nemuseli mít všechno vyřešené. Stačilo, že si konečně začali naslouchat."}
+};
+const names=()=>({boy:$('boy').value.trim()||"Adam",girl:$('girl').value.trim()||"Nela",place:$('place').value.trim()||"tajemné místo",title:$('title').value.trim()||"Nový seriál"});
+const localized={
+ en:{titles:['The First Clue','A Sound Behind the Door','The Hidden Message','No Way Back','The Final Secret'], intro:'After sunset, strange things happened here, and people in town preferred not to talk about them.',twist:'Then came a sound that should not have been possible.',end:'The loudspeaker crackled: “It is not over. Same time tomorrow.”',
+ b1:(n)=>`It all began at a place that ${n.boy} and ${n.girl} had barely noticed. ${n.place} looked ordinary during the day, but tonight something had changed.`,b2:(n)=>`The next day, ${n.boy} returned with a flashlight and notes. ${n.girl} was already waiting. “Tell me you have an explanation,” she said. “I do,” he replied. “You just won't like it.” Together they found the first clue leading away from ${n.place}.`,b3:(n)=>`The clue led them into a room no one had visited for years. An envelope with two names lay on the table. ${n.girl} opened it and fell silent. Inside was a message connecting everything that had happened.`,b4:(n)=>`They knew they could not continue alone. ${n.boy} admitted what he had been hiding, and ${n.girl} showed him her notes. The details finally fit together. One last journey back to ${n.place} remained.`,b5:(n)=>`When they returned to ${n.place}, they were no longer the same. The final piece fell into place, and they understood why they had been brought here.`, endings:['As they left, she noticed a light in a window that had been bricked up for years. Neither said a word. End of episode one.','On the back was tomorrow’s date. Someone knew what they would do before they had decided. End of episode two.','There was a small photo inside. Someone stood in the background who, according to every record, could not have been there. End of episode three.','The door opened, revealing an answer and a new question. There was no turning back. End of episode four.','When they left, another envelope remained on the table. This time it read: “To be continued?” End of season one.']},
+ de:{titles:['Der erste Hinweis','Ein Geräusch hinter der Tür','Die versteckte Nachricht','Kein Zurück','Das letzte Geheimnis'],intro:'Nach Sonnenuntergang geschahen hier seltsame Dinge, über die im Ort niemand sprechen wollte.',twist:'Dann ertönte ein Geräusch, das unmöglich sein sollte.',end:'Der Lautsprecher knackte: „Es ist noch nicht vorbei. Morgen zur selben Zeit.“',b1:n=>`Alles begann an einem Ort, den ${n.boy} und ${n.girl} kaum beachtet hatten. ${n.place} wirkte tagsüber ganz gewöhnlich, doch heute Abend hatte sich etwas verändert.`,b2:n=>`Am nächsten Tag kam ${n.boy} mit einer Taschenlampe und Notizen zurück. ${n.girl} wartete bereits. „Sag mir, dass du eine Erklärung hast“, sagte sie. „Habe ich“, antwortete er. „Sie wird dir nur nicht gefallen.“ Gemeinsam fanden sie eine Spur, die von ${n.place} wegführte.`,b3:n=>`Die Spur führte sie in einen Raum, den seit Jahren niemand betreten hatte. Auf dem Tisch lag ein Umschlag mit zwei Namen. ${n.girl} öffnete ihn und verstummte. Darin war eine Nachricht, die alle Ereignisse verband.`,b4:n=>`Sie wussten nun, dass sie nicht allein weitermachen konnten. ${n.boy} gestand, was er verheimlicht hatte, und ${n.girl} zeigte ihm ihre Notizen. Die Hinweise passten zusammen. Nur eine letzte Rückkehr nach ${n.place} blieb.`,b5:n=>`Als sie nach ${n.place} zurückkehrten, waren sie nicht mehr dieselben. Das letzte Puzzleteil passte, und sie verstanden, warum sie hierhergeführt worden waren.`,endings:['Beim Gehen bemerkte sie Licht in einem Fenster, das längst zugemauert sein sollte. Ende der ersten Folge.','Auf der Rückseite stand das morgige Datum. Jemand wusste schon vorher, was sie tun würden. Ende der zweiten Folge.','Im Umschlag lag ein Foto. Im Hintergrund stand jemand, der laut allen Unterlagen nicht dort sein konnte. Ende der dritten Folge.','Die Tür öffnete sich. Dahinter warteten eine Antwort und eine neue Frage. Ende der vierten Folge.','Auf dem Tisch blieb ein weiterer Umschlag zurück. Darauf stand: „Fortsetzung folgt?“ Ende der ersten Staffel.']},
+ es:{titles:['La primera pista','Un ruido tras la puerta','El mensaje oculto','Sin vuelta atrás','El último secreto'],intro:'Después del anochecer ocurrían cosas extrañas y la gente del pueblo prefería no hablar de ellas.',twist:'Entonces se oyó un sonido que no debería haber sido posible.',end:'El altavoz crujió: «Esto no ha terminado. Mañana a la misma hora».',b1:n=>`Todo comenzó en un lugar al que ${n.boy} y ${n.girl} apenas prestaban atención. ${n.place} parecía normal durante el día, pero esa noche algo había cambiado.`,b2:n=>`Al día siguiente, ${n.boy} volvió con una linterna y unas notas. ${n.girl} ya lo esperaba. «Dime que tienes una explicación», dijo ella. «La tengo», respondió él. «Pero no te gustará». Juntos encontraron una pista que se alejaba de ${n.place}.`,b3:n=>`La pista los llevó a una habitación que nadie visitaba desde hacía años. Sobre la mesa había un sobre con dos nombres. ${n.girl} lo abrió y se quedó en silencio. Dentro había un mensaje que conectaba todos los sucesos.`,b4:n=>`Comprendieron que no podían seguir por separado. ${n.boy} confesó lo que había ocultado y ${n.girl} le enseñó sus notas. Las piezas encajaron. Solo quedaba regresar a ${n.place}.`,b5:n=>`Cuando volvieron a ${n.place}, ya no eran los mismos. La última pieza encajó y comprendieron por qué habían llegado allí.`,endings:['Al marcharse, ella vio una luz en una ventana que llevaba años tapiada. Fin del primer episodio.','En el reverso aparecía la fecha de mañana. Alguien sabía lo que harían antes de decidirlo. Fin del segundo episodio.','Dentro había una foto pequeña. Al fondo aparecía alguien que, según los registros, no podía estar allí. Fin del tercer episodio.','La puerta se abrió y detrás esperaba una respuesta y una nueva pregunta. Fin del cuarto episodio.','Sobre la mesa quedó otro sobre con una sola palabra: «¿Continuará?». Fin de la primera temporada.']},
+ fr:{titles:['Le premier indice','Un bruit derrière la porte','Le message caché','Sans retour','Le dernier secret'],intro:'Après le coucher du soleil, des choses étranges se produisaient ici et les habitants préféraient ne pas en parler.',twist:'Puis un bruit impossible à expliquer retentit.',end:'Le haut-parleur grésilla : « Ce n’est pas fini. Demain, à la même heure. »',b1:n=>`Tout a commencé dans un lieu auquel ${n.boy} et ${n.girl} ne prêtaient guère attention. ${n.place} semblait ordinaire le jour, mais ce soir quelque chose avait changé.`,b2:n=>`Le lendemain, ${n.boy} revint avec une lampe et des notes. ${n.girl} l’attendait déjà. « Dis-moi que tu as une explication », dit-elle. « Oui, répondit-il, mais elle ne te plaira pas. » Ensemble, ils trouvèrent un indice qui les éloignait de ${n.place}.`,b3:n=>`L’indice les conduisit dans une pièce que personne n’avait visitée depuis des années. Une enveloppe portant deux noms était posée sur la table. ${n.girl} l’ouvrit et resta silencieuse. Le message reliait tous les événements précédents.`,b4:n=>`Ils comprirent qu’ils ne pouvaient pas continuer chacun de leur côté. ${n.boy} avoua ce qu’il cachait et ${n.girl} lui montra ses notes. Les détails s’assemblèrent. Il ne leur restait qu’à retourner à ${n.place}.`,b5:n=>`Quand ils revinrent à ${n.place}, ils avaient changé. La dernière pièce du puzzle se mit en place et ils comprirent pourquoi ils étaient venus ici.`,endings:['En partant, elle remarqua une lumière dans une fenêtre murée depuis longtemps. Fin du premier épisode.','Au dos figurait la date du lendemain. Quelqu’un savait ce qu’ils feraient avant même leur décision. Fin du deuxième épisode.','Une petite photo se trouvait dans l’enveloppe. Quelqu’un apparaissait au fond, alors que les dossiers affirmaient son absence. Fin du troisième épisode.','La porte s’ouvrit sur une réponse et une nouvelle question. Fin du quatrième épisode.','Une autre enveloppe resta sur la table. Elle portait ces mots : « À suivre ? » Fin de la première saison.']}
+};
+const languageNames={cs:'Čeština',en:'English',de:'Deutsch',es:'Español',fr:'Français'};
+
+function expandEpisodeBody(body, episodeIndex, lang, n, genre){
+ const stage = {
+  cs:[
+   `Cestou ${n.boy} několikrát zpomalil a kontroloval, jestli za nimi někdo nejde. ${n.girl} se snažila působit klidně, ale prsty pevně svírala své poznámky. Vzduch byl chladnější než před chvílí a každý zvuk se nesl mnohem dál. Když se zastavili, slyšeli jen vzdálené hučení města. Přesto měli oba pocit, že se právě někdo schoval za nejbližší roh.`,
+   `Nejdřív si všechno zapsali a porovnali čas, místo i drobnosti, které jim předtím připadaly bezvýznamné. ${n.girl} si všimla, že jeden detail do příběhu vůbec nezapadá. Ukázala ho ${n.boy} a chvíli se přeli, co by mohl znamenat. Nakonec se shodli, že nemá cenu hádat. Musí se vrátit na místo, kde všechno začalo, a podívat se na něj z úplně jiné strany.`,
+   `Uvnitř panovalo ticho, které působilo skoro nepřirozeně. Každý krok vyvolal ozvěnu a světlo baterky klouzalo po zaprášených stěnách. ${n.boy} objevil drobnou značku u podlahy, zatímco ${n.girl} si všimla pootevřené zásuvky. Nebylo jasné, kdo tu byl naposledy ani proč po sobě zanechal tak pečlivě uspořádané věci. Jedno však bylo jisté: někdo chtěl, aby tu stopu našli.`,
+   `Na chvíli se zastavili a každý řekl nahlas, čeho se nejvíc obává a co naopak doufá, že objeví. Rozhovor jim pomohl uklidnit se a spojit informace, které měl každý jen napůl. Najednou začala dávat smysl i stará poznámka, kterou málem vyhodili. Nebyla to úplná odpověď, ale ukazovala směr. A hlavně dokazovala, že jejich předchozí kroky nebyly náhodné.`,
+   `Když už si mysleli, že mají všechno pod kontrolou, ozval se nový zvuk a oba ztichli. ${n.girl} se podívala na ${n.boy}; tentokrát nebylo potřeba nic vysvětlovat. Rychle si rozdělili úkoly, domluvili si signál a pokračovali opatrně. Každá další minuta přinášela nové otázky, ale také odvahu nevzdat to. Věděli, že odpověď bude důležitá nejen pro ně, ale i pro lidi kolem nich.`
+  ],
+  en:[
+   `${n.boy} slowed down several times to check whether anyone was following them. ${n.girl} tried to look calm, but her fingers held her notes tightly. The air had grown colder, and every little sound seemed to travel much farther than before. When they stopped, they could hear only the distant hum of the town. Still, both had the uneasy feeling that someone had just slipped behind the nearest corner.`,
+   `They wrote everything down and compared the time, the place, and the tiny details that had seemed unimportant earlier. ${n.girl} noticed one thing that did not fit the story at all. She showed it to ${n.boy}, and they argued quietly about what it could mean. In the end, they agreed that guessing would get them nowhere. They needed to return to where everything had begun and look at it from a completely different angle.`,
+   `Inside, the silence felt almost unnatural. Every step echoed, and the beam of the flashlight slid across dusty walls. ${n.boy} spotted a small mark near the floor while ${n.girl} noticed a drawer left slightly open. They could not tell who had been there last or why everything had been arranged so carefully. One thing was certain: someone wanted them to find this clue, and that made it more worrying than a simple accident.`,
+   `They paused, and each admitted what they were most afraid of and what they hoped to discover. Talking helped them calm down and connect pieces of information that each had only half understood. Suddenly, even an old note they had almost thrown away began to make sense. It was not a complete answer, but it pointed them in a new direction. More importantly, it proved that their earlier steps had not been random.`,
+   `Just when they thought they had everything under control, a new sound made them both fall silent. ${n.girl} looked at ${n.boy}; this time, neither needed to explain anything. They quickly divided the tasks, agreed on a signal, and moved forward carefully. Every minute brought new questions, but it also gave them more courage to keep going. They knew the answer would matter not only to them, but to everyone around them.`
+  ],
+  de:[
+   `${n.boy} wurde mehrmals langsamer und prüfte, ob ihnen jemand folgte. ${n.girl} versuchte ruhig zu wirken, hielt ihre Notizen aber fest umklammert. Die Luft war kälter geworden und jedes Geräusch schien weiter zu tragen als zuvor. Als sie stehen blieben, hörten sie nur das ferne Summen des Ortes. Trotzdem hatten beide das Gefühl, dass gerade jemand hinter der nächsten Ecke verschwunden war.`,
+   `Sie notierten alles und verglichen Uhrzeit, Ort und die kleinen Einzelheiten, die ihnen vorher unwichtig erschienen waren. ${n.girl} bemerkte, dass ein Detail überhaupt nicht zu der Geschichte passte. Sie zeigte es ${n.boy}, und sie diskutierten leise über seine Bedeutung. Schließlich beschlossen sie, nicht länger zu raten. Sie mussten zum Anfang zurückkehren und die Sache aus einem völlig anderen Blickwinkel betrachten.`,
+   `Im Inneren herrschte eine beinahe unnatürliche Stille. Jeder Schritt hallte wider, während der Lichtkegel über staubige Wände glitt. ${n.boy} entdeckte eine kleine Markierung am Boden, während ${n.girl} eine halb geöffnete Schublade bemerkte. Niemand wusste, wer zuletzt hier gewesen war oder warum alles so sorgfältig angeordnet worden war. Sicher war nur: Jemand wollte, dass sie diesen Hinweis fanden.`,
+   `Sie hielten kurz inne und erzählten einander, wovor sie am meisten Angst hatten und was sie hofften zu entdecken. Das Gespräch beruhigte sie und verband Informationen, die jeder nur teilweise verstanden hatte. Plötzlich ergab sogar eine alte Notiz Sinn, die sie beinahe weggeworfen hätten. Sie lieferte noch keine vollständige Antwort, zeigte aber eine neue Richtung. Vor allem bewies sie, dass ihre bisherigen Schritte kein Zufall gewesen waren.`,
+   `Gerade als sie glaubten, alles im Griff zu haben, ertönte ein neues Geräusch und beide verstummten. ${n.girl} sah ${n.boy} an; diesmal mussten sie nichts erklären. Sie teilten die Aufgaben auf, vereinbarten ein Zeichen und gingen vorsichtig weiter. Jede Minute brachte neue Fragen, aber auch mehr Mut, nicht aufzugeben. Sie wussten, dass die Antwort nicht nur für sie, sondern auch für die Menschen um sie herum wichtig sein würde.`
+  ],
+  es:[
+   `${n.boy} redujo el paso varias veces para comprobar si alguien los seguía. ${n.girl} intentaba parecer tranquila, pero sujetaba sus notas con fuerza. El aire se había vuelto más frío y cada sonido parecía viajar mucho más lejos. Cuando se detuvieron, solo oyeron el zumbido lejano del pueblo. Aun así, ambos sintieron que alguien acababa de esconderse detrás de la esquina más cercana.`,
+   `Lo anotaron todo y compararon la hora, el lugar y los pequeños detalles que antes parecían insignificantes. ${n.girl} descubrió algo que no encajaba en absoluto con la historia. Se lo enseñó a ${n.boy} y discutieron en voz baja qué podía significar. Al final decidieron que adivinar no serviría de nada. Debían volver al lugar donde todo había empezado y observarlo desde un punto de vista completamente distinto.`,
+   `Dentro reinaba un silencio casi antinatural. Cada paso resonaba y la linterna iluminaba las paredes cubiertas de polvo. ${n.boy} encontró una pequeña marca cerca del suelo, mientras ${n.girl} vio un cajón entreabierto. No sabían quién había estado allí por última vez ni por qué todo estaba colocado con tanto cuidado. Una cosa estaba clara: alguien quería que encontraran aquella pista.`,
+   `Se detuvieron un momento y cada uno confesó qué era lo que más temía y qué esperaba descubrir. Hablar les ayudó a tranquilizarse y a unir información que cada uno comprendía solo a medias. De pronto, incluso una nota antigua que casi habían tirado empezó a tener sentido. No ofrecía una respuesta completa, pero señalaba una dirección nueva. Sobre todo, demostraba que sus pasos anteriores no habían sido casuales.`,
+   `Justo cuando creían tenerlo todo bajo control, un nuevo ruido los dejó en silencio. ${n.girl} miró a ${n.boy}; esta vez no hacía falta explicar nada. Se repartieron las tareas, acordaron una señal y avanzaron con cuidado. Cada minuto traía nuevas preguntas, pero también más valor para no rendirse. Sabían que la respuesta sería importante no solo para ellos, sino para quienes los rodeaban.`
+  ],
+  fr:[
+   `${n.boy} ralentit plusieurs fois pour vérifier si quelqu’un les suivait. ${n.girl} essayait de rester calme, mais elle serrait ses notes entre ses doigts. L’air était devenu plus froid et chaque bruit semblait porter beaucoup plus loin. Lorsqu’ils s’arrêtèrent, ils n’entendirent que le lointain bourdonnement de la ville. Pourtant, tous deux eurent l’impression que quelqu’un venait de se cacher derrière le coin le plus proche.`,
+   `Ils notèrent tout et comparèrent l’heure, le lieu et les petits détails qui leur avaient paru insignifiants auparavant. ${n.girl} remarqua un élément qui ne correspondait pas du tout à l’histoire. Elle le montra à ${n.boy}, et ils discutèrent à voix basse de sa signification. Finalement, ils décidèrent que les suppositions ne serviraient à rien. Ils devaient retourner au point de départ et regarder les choses sous un angle totalement différent.`,
+   `À l’intérieur, le silence semblait presque irréel. Chaque pas résonnait et le faisceau de la lampe glissait sur les murs poussiéreux. ${n.boy} découvrit une petite marque près du sol, tandis que ${n.girl} remarqua un tiroir entrouvert. Ils ignoraient qui était venu ici en dernier et pourquoi tout avait été rangé avec tant de soin. Une chose était certaine : quelqu’un voulait qu’ils trouvent cet indice.`,
+   `Ils firent une pause et chacun avoua ce qu’il craignait le plus et ce qu’il espérait découvrir. Cette conversation les aida à se calmer et à relier des informations que chacun ne comprenait qu’à moitié. Soudain, même une vieille note qu’ils avaient failli jeter prit un sens nouveau. Elle ne donnait pas une réponse complète, mais indiquait une direction. Surtout, elle prouvait que leurs démarches précédentes n’étaient pas dues au hasard.`,
+   `Au moment où ils pensaient tout maîtriser, un nouveau bruit les fit taire. ${n.girl} regarda ${n.boy} ; cette fois, aucun mot n’était nécessaire. Ils se répartirent les tâches, choisirent un signal et avancèrent prudemment. Chaque minute apportait de nouvelles questions, mais aussi le courage de continuer. Ils savaient que la réponse compterait non seulement pour eux, mais aussi pour les personnes qui les entouraient.`
+  ]
+ };
+ const paragraphs=stage[lang]||stage.cs;
+ // Five substantial extra paragraphs per episode, targeting roughly five minutes of narration.
+ return body + "\n\n" + paragraphs.join("\n\n");
+}
+
+function makeLocalizedEpisodes(){
+ const lang=$('language').value, n=names(), d=localized[lang];
+ if(lang==='cs')return null;
+ const titles=d.titles;
+ const bodies=[d.b1(n)+' '+d.intro, d.b2(n), d.b3(n)+' '+d.twist, d.b4(n), d.b5(n)+' '+d.end];
+ return bodies.map((body,i)=>({title:titles[i],body:expandEpisodeBody(body+'\n\n'+d.endings[i],i,lang,n,$('genre').value),scene:genreData[$('genre').value].scene[i],caption:`Scene ${i+1} • ${titles[i]}`,speaker:i%2===0?n.boy:n.girl,genre:$('genre').value}));
+}
+function makeEpisodes(){
+ const translated=makeLocalizedEpisodes(); if(translated)return translated;
+ const g=$('genre').value,d=genreData[g],n=names(),style=$('style').value;
+ const transitions=[
+ `Všechno začalo na místě, kterému ${n.boy} a ${n.girl} nevěnovali pozornost. ${n.place} vypadalo přes den úplně obyčejně, ale dnes večer se na něm něco změnilo. ${d.intro}`,
+ `Druhý den se ${n.boy} vrátil s baterkou a poznámkami. ${n.girl} už na něj čekala. „Řekni mi, že máš vysvětlení,“ řekla. „Mám,“ odpověděl. „Jen se ti nebude líbit.“ Společně našli první stopu, která vedla dál od ${n.place}.`,
+ `Stopa je zavedla do místnosti, kam se nikdo roky nepodíval. Na stole ležela obálka se dvěma jmény. ${n.girl} ji otevřela a ztichla. Uvnitř byla zpráva, která spojovala všechny předchozí události. ${d.twist}`,
+ `Teď už věděli, že nemohou pokračovat každý sám. ${n.boy} přiznal, co celou dobu tajil, a ${n.girl} mu ukázala vlastní poznámky. Drobnosti do sebe zapadly. Zbývala poslední cesta zpět na ${n.place}, kde měla záhada své skutečné centrum.`,
+ `Když se vrátili na ${n.place}, nebyli už stejní jako na začátku. Poslední dílek konečně zapadl a oba pochopili, proč je příběh přivedl právě sem. ${d.end}`
+ ];
+ const endings=[
+ `Na odchodu si ${n.girl} všimla světla v okně, které mělo být dávno zazděné. Neřekla nic, ale ${n.boy} se otočil ve stejnou chvíli. Konec prvního dílu.`,
+ `Na zadní straně našli datum: zítřek. Někdo věděl, co udělají, ještě než se pro to rozhodli. Konec druhého dílu.`,
+ `V obálce byla také malá fotografie. V pozadí stál někdo, kdo tam podle všech záznamů nemohl být. Konec třetího dílu.`,
+ `Dveře se otevřely a za nimi čekala odpověď i nová otázka. Už nebylo cesty zpět. Konec čtvrtého dílu.`,
+ `Když odešli, na stole zůstala další obálka. Tentokrát na ní nebyla jejich jména, ale nápis: „Pokračování?“ Konec první série.`
+ ];
+ return transitions.map((body,i)=>({title:d.titles[i],body:expandEpisodeBody(body+`\n\n${endings[i]}`,i,'cs',n,g),scene:d.scene[i],caption:`Scéna ${i+1} • ${d.titles[i]}`,speaker:i%2===0?n.boy:n.girl,genre:g}));
+}
+function render(){
+ const n=names(),g=$('genre').value,d=genreData[g],ep=episodes[current];
+ $('storyTitle').textContent=n.title;$('genreLabel').textContent=g.toUpperCase()+" • "+({cs:'SERIÁL',en:'SERIES',de:'SERIE',es:'SERIE',fr:'SÉRIE'}[$('language').value]||'SERIÁL');
+ $('storySub').textContent=({cs:`${current+1}. díl z 5`,en:`Episode ${current+1} of 5`,de:`Folge ${current+1} von 5`,es:`Episodio ${current+1} de 5`,fr:`Épisode ${current+1} sur 5`}[$('language').value])+` • ${ep.title}`;
+ $('scene').textContent=ep.scene;$('artcaption').textContent=ep.caption;
+ $('art').style.setProperty('--glow',d.glow);$('art').style.setProperty('--glow2',d.glow2);
+ $('storytext').innerHTML='';
+ const parts=ep.body.split('\n\n');
+ parts.forEach((p,i)=>{
+   const para=document.createElement('p');
+   const sentences=splitForSpeech(p);
+   sentences.forEach((sentence,j)=>{
+     const span=document.createElement('span');
+     span.className='read-sentence';
+     span.dataset.sentenceIndex=String(i+'-'+j);
+     span.textContent=sentence+(j<sentences.length-1?' ':'');
+     para.appendChild(span);
+   });
+   $('storytext').appendChild(para);
+ });
+ $('episodebar').innerHTML='';
+ episodes.forEach((e,i)=>{const b=document.createElement('button');b.className='epbtn'+(i===current?' active':'');b.textContent=`${i+1}. ${e.title}`;b.onclick=()=>{current=i;render();speechSynthesis.cancel();document.querySelectorAll('.read-sentence.active').forEach(el=>el.classList.remove('active'));$('status').textContent=`Otevřen ${i+1}. díl.`};$('episodebar').appendChild(b)});
+ $('prev').disabled=current===0;$('next').disabled=current===4;
+}
+function create(){speechSynthesis?.cancel();episodes=makeEpisodes();current=0;render();$('status').textContent=({cs:'Seriál je připravený. Každý díl navazuje na předchozí.',en:'Your series is ready. Each episode continues the story.',de:'Deine Serie ist fertig. Jede Folge setzt die Geschichte fort.',es:'Tu serie está lista. Cada episodio continúa la historia.',fr:'Votre série est prête. Chaque épisode poursuit l’histoire.'}[$('language').value])}
+function getVoices(){
+ voices=speechSynthesis.getVoices().sort((a,b)=>{const score=v=>/natural|online|neural/i.test(v.name)?0:/google|microsoft/i.test(v.name)?1:2;return score(a)-score(b)});
+ populateVoiceSelectors();
+}
+function populateVoiceSelectors(){
+ const male=$('maleVoice'), female=$('femaleVoice');
+ if(!male || !female)return;
+ const oldMale=male.value, oldFemale=female.value;
+ [male,female].forEach((select,idx)=>{
+   select.innerHTML='';
+   const auto=document.createElement('option');
+   auto.value='';auto.textContent=idx===0?'Automaticky vybrat mužský hlas':'Automaticky vybrat ženský hlas';
+   select.appendChild(auto);
+   voices.forEach((v,i)=>{
+     const o=document.createElement('option');
+     o.value=String(i);
+     o.textContent=`${v.name} (${v.lang||'jazyk neuveden'})`;
+     select.appendChild(o);
+   });
+   if(idx===0 && [...select.options].some(o=>o.value===oldMale))select.value=oldMale;
+   if(idx===1 && [...select.options].some(o=>o.value===oldFemale))select.value=oldFemale;
+ });
+}
+if('speechSynthesis' in window){getVoices();speechSynthesis.onvoiceschanged=getVoices}
+function chooseVoice(gender){
+ const selected=$(gender==='female'?'femaleVoice':'maleVoice')?.value;
+ if(selected!==undefined && selected!=='' && voices[Number(selected)])return voices[Number(selected)];
+ const targetLang=$('language')?.value||'cs';
+ // Use voices matching the selected language. Czech narration therefore returns
+ // to the original Czech voice selection instead of borrowing a German voice.
+ const languageVoices=voices.filter(v=>v.lang&&v.lang.toLowerCase().startsWith(targetLang));
+ let pool=languageVoices.length?languageVoices:voices;
+ if(!pool.length)return null;
+ const pattern=gender==='female'
+  ?/female|woman|zira|samantha|victoria|eva|anna|tessa|karen|linda|katka|iva|jana|helena|online.*(natural|female)|female.*natural/i
+  :/male|man|david|mark|daniel|george|thomas|pavel|jakub|filip|antonin|michal|online.*(natural|male)|male.*natural/i;
+ const match=pool.find(v=>pattern.test(v.name));
+ // If only one voice exists, browser speech cannot make a truly different voice just by changing pitch.
+ return match||pool[0];
+}
+let speakingToken=0;
+function splitForSpeech(text){
+ // Short natural phrases reduce browser TTS glitches without cutting a sentence mid-word.
+ return text.replace(/\s+/g,' ').match(/[^.!?…]+[.!?…]+["”’)]*|[^.!?…]+$/g)?.map(s=>s.trim()).filter(Boolean)||[text];
+}
+function speak(){
+ if(!('speechSynthesis'in window)){ $('status').textContent='Předčítání není v tomto prohlížeči dostupné.';return}
+ speechSynthesis.cancel();
+ const token=++speakingToken, n=names(), ep=episodes[current];
+ document.querySelectorAll('.read-sentence.active').forEach(el=>el.classList.remove('active'));
+ const blocks=ep.body.split('\n\n').filter(Boolean);
+ const queue=[];
+ blocks.forEach((block,bi)=>{
+   const character=(bi%2===0)?n.boy:n.girl;
+   const gender=(bi%2===0)?'male':'female';
+   splitForSpeech(block).forEach((sentence,si)=>queue.push({
+     text:sentence,character,gender,spanKey:`${bi}-${si}`
+   }));
+ });
+ if(!queue.length)return;
+ let completed=0;
+ const selectedVoiceMale=chooseVoice('male');
+ const selectedVoiceFemale=chooseVoice('female');
+ if(selectedVoiceMale && selectedVoiceFemale && selectedVoiceMale.name===selectedVoiceFemale.name){
+   $('status').textContent='Pozor: zařízení nabízí pro obě postavy stejný hlas. Vyber jiné hlasy v nastavení, nebo nainstaluj další české hlasy ve Windows.';
+ }
+ // Pick one stable voice per character for the whole episode, avoiding voice changes mid-sentence.
+ queue.forEach((item,i)=>{
+   const u=new SpeechSynthesisUtterance(item.text);
+   // Always tell speech synthesis the selected story language, even when using a voice
+   // originally listed under German. This asks it to pronounce Czech text as Czech.
+   u.lang=({cs:'cs-CZ',en:'en-US',de:'de-DE',es:'es-ES',fr:'fr-FR'}[$('language').value]||'cs-CZ');
+   // A slightly slower pace and neutral pitch are usually clearer for Czech narration.
+   u.rate=0.94;
+   u.pitch=item.gender==='female'?1.02:0.98;
+   u.volume=1;
+   const voice=item.gender==='female'?selectedVoiceFemale:selectedVoiceMale;
+   if(voice)u.voice=voice;
+   u.onstart=()=>{
+     if(token!==speakingToken)return;
+     document.querySelectorAll('.read-sentence.active').forEach(el=>el.classList.remove('active'));
+     const target=document.querySelector(`[data-sentence-index="${item.spanKey}"]`);
+     if(target){target.classList.add('active');target.scrollIntoView({behavior:'smooth',block:'nearest'});}
+     $('status').textContent=`${({cs:'Právě čte',en:'Reading',de:'Liest gerade',es:'Leyendo',fr:'Lecture'}[$('language').value])} ${item.character} • ${i+1}/${queue.length}`;
+   };
+   u.onend=()=>{
+     if(token===speakingToken){
+       completed++;
+       if(completed===queue.length){
+         document.querySelectorAll('.read-sentence.active').forEach(el=>el.classList.remove('active'));
+         $('status').textContent='Díl dočten.';
+       }
+     }
+   };
+   u.onerror=(e)=>{
+     if(token===speakingToken && e.error!=='canceled' && e.error!=='interrupted')
+       $('status').textContent='Hlas se zastavil. Zkus znovu spustit předčítání.';
+   };
+   speechSynthesis.speak(u);
+ });
+}
+$('create').onclick=create; $('language').onchange=create;
+$('next').onclick=()=>{if(current<4){current++;render();speechSynthesis.cancel();document.querySelectorAll('.read-sentence.active').forEach(el=>el.classList.remove('active'));$('status').textContent='Připraven další díl.'}};
+$('prev').onclick=()=>{if(current>0){current--;render();speechSynthesis.cancel();document.querySelectorAll('.read-sentence.active').forEach(el=>el.classList.remove('active'));$('status').textContent='Připraven předchozí díl.'}};
+$('read').onclick=speak;
+$('pause').onclick=()=>{if('speechSynthesis'in window){if(speechSynthesis.paused){speechSynthesis.resume();$('status').textContent='Předčítání pokračuje.'}else if(speechSynthesis.speaking){speechSynthesis.pause();$('status').textContent='Předčítání pozastaveno.'}else{$('status').textContent='Nejdřív spusť předčítání.'}}};
+$('stop').onclick=()=>{if('speechSynthesis'in window)speechSynthesis.cancel();speakingToken++;document.querySelectorAll('.read-sentence.active').forEach(el=>el.classList.remove('active'));$('status').textContent='Předčítání zastaveno.'};
+$('copy').onclick=async()=>{const n=names(),text=`${n.title} — ${current+1}. díl: ${episodes[current].title}\n\n${episodes[current].body}`;try{await navigator.clipboard.writeText(text);$('status').textContent='Text dílu zkopírován.'}catch(e){$('status').textContent='Kopírování není dostupné. Označ text a zkopíruj ho ručně.'}};
+create();
+let deferredInstallPrompt=null;
+const installBtn=$('install');
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e;installBtn.hidden=false});
+installBtn.onclick=async()=>{if(!deferredInstallPrompt){$('status').textContent='V Chrome otevři nabídku ⋮ a zvol Instalovat StoryVerse AI.';return}
+ deferredInstallPrompt.prompt();await deferredInstallPrompt.userChoice;deferredInstallPrompt=null;installBtn.hidden=true};
+if('serviceWorker' in navigator && location.protocol!=='file:'){navigator.serviceWorker.register('./sw.js').catch(()=>{});}
+</script>
+</body>
+</html>
